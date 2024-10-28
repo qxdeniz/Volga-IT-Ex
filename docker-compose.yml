@@ -1,0 +1,45 @@
+version: '3.8'
+services:
+  account_service:
+    build: ./account_service
+    command: ["uvicorn", "account_service:app", "--host", "0.0.0.0", "--port", "8081", "--reload"]
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://user:password@db:5432/account_db
+    ports:
+      - "8081:8081"
+
+  timetable_service:
+    build: ./timetable_service
+    command: ["uvicorn", "timetable_service:app", "--host", "0.0.0.0", "--port", "8083", "--reload"]
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://user:password@db:5432/timetable_db
+    ports:
+      - "8083:8083"
+
+  documents_service:
+    build: ./documents_service
+    command: ["uvicorn", "document_service:app", "--host", "0.0.0.0", "--port", "8084", "--reload"]
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://user:password@db:5432/document_db
+    ports:
+      - "8084:8084"
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
