@@ -10,6 +10,16 @@ services:
     ports:
       - "8081:8081"
 
+  hospital_service:
+    build: ./hospital_service
+    command: [ "uvicorn", "timetable_service:app", "--host", "0.0.0.0", "--port", "8082", "--reload" ]
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://user:password@db:5432/hospital_db
+    ports:
+      - "8082:8082"
+
   timetable_service:
     build: ./timetable_service
     command: ["uvicorn", "timetable_service:app", "--host", "0.0.0.0", "--port", "8083", "--reload"]
